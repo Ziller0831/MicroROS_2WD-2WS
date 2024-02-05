@@ -1,0 +1,1 @@
+const int Dir = 2

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 '''
-    Geometry_msgs/Twist
+    Twist
 '''
 import math
 import threading

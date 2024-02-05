@@ -1,7 +1,4 @@
 #!/usr/bin/python3
-'''
-    Geometry_msgs/Twist
-'''
 import math
 import threading
 import rclpy
@@ -26,7 +23,7 @@ class Commander(Node):
         self.steering_track = self.wheel_seperation - 2*self.wheel_steering_y_offset
 
         self.pos = np.array([0,0,0,0], float)
-        self.vel = np.array([0,0,0,0], float) #[left_front, right_front, left_rear, right_rear]
+        self.vel = np.array([0,0,0,0], float) #[left_front, right_front, left_rear, right_rear[]
 
         self.pub_pos = self.create_publisher(Float64MultiArray, '/forward_position_controller/commands', 10)
         self.pub_vel = self.create_publisher(Float64MultiArray, '/forward_velocity_controller/commands', 10)
