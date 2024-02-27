@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <micro_ros_arduino.h>
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 #include <math.h>

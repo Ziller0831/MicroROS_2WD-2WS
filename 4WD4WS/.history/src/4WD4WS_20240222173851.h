@@ -34,9 +34,8 @@ typedef struct ackermannPara
     float R; //
 
     float thetaR;
-    float thetaL;
 } AckermannPara;
 
 AckermannPara RobotSteer;
 
-void AckermannSteering(float Robot_yaw);
+float AckermannSteering(float Robot_yaw);

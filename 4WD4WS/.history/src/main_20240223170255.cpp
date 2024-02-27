@@ -40,16 +40,17 @@ void loop()
     Angle = Serial.parseInt();
     AckermannSteering(Angle);
 
-    Serial.print("thetaR: ");
+    Serial.print("thetaR ");
     Serial.println(RobotSteer.thetaR);
 
     Serial.print("thetaL: ");
     Serial.println(RobotSteer.thetaL);
-
-    Pulse[0] = RobotSteer.thetaR / Pulse2Deg;
-    Pulse[1] = RobotSteer.thetaL / Pulse2Deg;
   }
 
+  Pulse[0] = RobotSteer.thetaR / Pulse2Deg;
+  Pulse[1] = RobotSteer.thetaL / Pulse2Deg;
+
+  
 
   steppers.moveTo(Pulse);
   steppers.runSpeedToPosition(); 

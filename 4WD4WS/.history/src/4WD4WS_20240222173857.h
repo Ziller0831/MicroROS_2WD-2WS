@@ -39,4 +39,4 @@ typedef struct ackermannPara
 
 AckermannPara RobotSteer;
 
-void AckermannSteering(float Robot_yaw);
+float AckermannSteering(float Robot_yaw);

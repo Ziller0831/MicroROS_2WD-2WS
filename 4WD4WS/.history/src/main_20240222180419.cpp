@@ -35,44 +35,26 @@ void setup()
 
 void loop()
 {
-  if(Serial.available() > 0)
-  {
+  if(Serial.available() > 0){
     Angle = Serial.parseInt();
-    AckermannSteering(Angle);
-
-    Serial.print("thetaR: ");
+    RobotSteer.thetaR, RobotSteer.thetaL = AckermannSteering(Angle);
     Serial.println(RobotSteer.thetaR);
-
-    Serial.print("thetaL: ");
-    Serial.println(RobotSteer.thetaL);
-
-    Pulse[0] = RobotSteer.thetaR / Pulse2Deg;
-    Pulse[1] = RobotSteer.thetaL / Pulse2Deg;
   }
 
+  Pulse[0] = RobotSteer.thetaR / Pulse2Deg;
+  Pulse[1] = RobotSteer.thetaL / Pulse2Deg;
 
   steppers.moveTo(Pulse);
   steppers.runSpeedToPosition(); 
   delay(1000);
 }
 
-void AckermannSteering(float Robot_yaw)
-{
-  double thetaR, thetaL;
-  Robot_yaw = Robot_yaw * (PI / 180);
-  if (Robot_yaw != 0)
-  {
-    RobotSteer.R = (RobotSteer.L / 2) / tan(Robot_yaw);
-    RobotSteer.thetaR = atan(RobotSteer.L / (RobotSteer.R - (RobotSteer.T / 2))) * (180 / PI);
-    RobotSteer.thetaL = -atan(RobotSteer.L / (RobotSteer.R + (RobotSteer.T / 2))) * (180 / PI);
 
-    Serial.print("thetaR ");
-    Serial.println(thetaR);
-  }
-  else if (Robot_yaw == 0)
-  {
-    RobotSteer.thetaR = 0;
-    RobotSteer.thetaL = 0;
-  }
+float AckermannSteering(float Robot_yaw){
+  RobotSteer.R = (RobotSteer.L / 2) / tan(Robot_yaw);
+  Serial.println(RobotSteer.R);
+  float thetaR = atan(RobotSteer.L / (RobotSteer.R - (RobotSteer.T / 2)));
+  float thetaL = atan(RobotSteer.L / (RobotSteer.R + (RobotSteer.T / 2)));
 
+  return thetaR, thetaL;
 }
