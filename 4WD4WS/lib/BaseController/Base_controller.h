@@ -1,50 +1,72 @@
-/*
- * Pulse2Deg  輪子轉一圈要的脈衝數
- @ (360/1.8)*16*10 = 32000  1 pulse = 0.01125 degree
+/**
+ * @file Base_controller.h
+ * @author your name (you@domain.com)
+ * @brief
+ * @version 0.1
+ * @date 2024-04-08
  *
-*/
+ * *連接端口  processPWM(int pwm)
+ *
+ *
+ */
 
-#ifndef BASE_CONTROL_H
-#define BASE_CONTROL_H
+#ifndef BASE_CONTROLLER_H
+#define BASE_CONTROLLER_H
 
 #include <Arduino.h>
+#include <AccelStepper.h>
+#include <MultiStepper.h>
+#include "base_config.h"
+#include "motor_interface.h"
 
-//* Pin definitions
-const int DIR_R = 12;
-const int STEP_R = 14;
-const int DIR_L = 2;
-const int STEP_L = 15;
-
-const int BLDC_R_PWM = 26;
-const int BLDC_L_PWM = 27;
-const int BLDC_R_rev = 16;
-const int BLDC_L_rev = 4;
-const int Encoder_R = 19;
-const int Encoder_L = 18;
-
-//* PWM channels
-#define R_PWM_channel 0
-#define L_PWM_channel 1
-
-//* Steper_constant
-const float StepAngle = 1.8;
-const int MicroStep = 16;
-const int GearRatio = 10; // 10:1
-
-typedef struct ackermannPara
+class BLDC : public MotorInterface
 {
-    const int T = 1120; // wheel axle spacing
-    const int L = 750;  // wheel spacing`l``
+public:
+    //* 物件建構子多載
+    BLDC(bool invert, int pwm_pin, int pwm_channel, int rev_pin, int pwm_offset) : MotorInterface(invert), pwm_pin_(pwm_pin), pwm_channel_(pwm_channel), rev_pin_(rev_pin), pwm_offset_(pwm_offset)
+    {
+        pinMode(pwm_pin_, OUTPUT);
+        pinMode(rev_pin_, OUTPUT);
 
-    float R; //
+        ledcSetup(pwm_channel_, 5000, 8);
+        ledcAttachPin(pwm_pin_, pwm_channel_);
+        ledcWrite(pwm_channel_, 0);
+    }
 
-    float thetaR;
-    float thetaL;
-} AckermannPara;
+    struct PWM_data
+    {
+        int pwm;
+        bool invert_;
+    };
 
-void BLDCSetting();
-void SteperSetting();
-void MotorDrive(float PWM);
-void Ackermann(float steer_angle);
+    void brake() override;
+
+    PWM_data processPWM(int pwm);
+
+private:
+    int pwm_pin_;
+    int pwm_channel_;
+    int rev_pin_;
+    int pwm_offset_;
+
+protected:
+    void forward(int pwm) override;
+    void reverse(int pwm) override;
+};
+
+AccelStepper R_Stepper(AccelStepper::DRIVER, STEP_R, DIR_R);
+AccelStepper L_Stepper(AccelStepper::DRIVER, STEP_L, DIR_L);
+
+void Stepper_init();
+
+long StepperPulses[2];
+
+// class Stepper : public MultiStepper
+// {
+//     public:
+//         Stepper();
+
+//     protected:
+// };
 
 #endif

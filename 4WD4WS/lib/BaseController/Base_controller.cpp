@@ -1,74 +1,65 @@
 #include "Base_controller.h"
-#include <AccelStepper.h>
-#include <MultiStepper.h>
 #include <math.h>
 
-AccelStepper RightStepper(AccelStepper::DRIVER, STEP_R, DIR_R);
-AccelStepper LeftStepper(AccelStepper::DRIVER, STEP_L, DIR_L);
-MultiStepper steppers;
 
-AckermannPara RobotSteer;
+// void Steering(float thetaR, float thetaL)
+// {
 
-void BLDCSetting()
+//     thetaR = thetaR * (PI / 180);
+//     thetaL = thetaL * (PI / 180);
+
+//     int R_pulse = thetaR / Pulse2Deg;
+//     int L_pulse = thetaL / Pulse2Deg;
+
+//     RightStepper.runToNewPosition(R_pulse);
+//     LeftStepper.runToNewPosition(L_pulse);
+// }
+
+void BLDC::brake()
 {
-    pinMode(BLDC_R_PWM, OUTPUT);
-    pinMode(BLDC_L_PWM, OUTPUT);
-    pinMode(BLDC_R_rev, OUTPUT);
-    pinMode(BLDC_L_rev, OUTPUT);
-    pinMode(Encoder_R, OUTPUT);
-    pinMode(Encoder_L, OUTPUT);
-
-    ledcSetup(R_PWM_channel, 5000, 8);
-    ledcAttachPin(BLDC_R_PWM, R_PWM_channel);
-
-    ledcSetup(L_PWM_channel, 5000, 8);
-    ledcAttachPin(BLDC_L_PWM, L_PWM_channel);
+    ledcWrite(pwm_pin_, 0);
 }
 
-void SteperSetting()
+void BLDC::forward(int pwm)
 {
-    pinMode(STEP_R, OUTPUT);
-    pinMode(DIR_R, OUTPUT);
-    pinMode(STEP_L, OUTPUT);
-    pinMode(DIR_L, OUTPUT);
-
-    RightStepper.setMaxSpeed(3200);
-    RightStepper.setSpeed(1600);
-    LeftStepper.setMaxSpeed(3200);
-    LeftStepper.setSpeed(1600);
-
-    steppers.addStepper(RightStepper);
-    steppers.addStepper(LeftStepper);
+    ledcWrite(pwm_pin_, pwm);
+    digitalWrite(rev_pin_, LOW);
 }
 
-void MotorDrive(float PWM)
+void BLDC::reverse(int pwm)
 {
-    ledcWrite(R_PWM_channel, PWM);
-    ledcWrite(L_PWM_channel, PWM);
+    ledcWrite(pwm_pin_, pwm);
+    digitalWrite(rev_pin_, HIGH);
 }
 
-void Ackermann(float steer_angle)
+BLDC::PWM_data BLDC::processPWM(int pwm)
 {
-    steer_angle = steer_angle * (PI / 180);
+    BLDC::PWM_data pwm_data;
 
-    double Pulse2Deg = 360 / ((360 / StepAngle) * MicroStep * GearRatio);
-    float Angle;
-    long Pulse[2];
-
-    if (steer_angle != 0)
+    if (pwm < 0)
     {
-        RobotSteer.R = (RobotSteer.L / 2) / tan(steer_angle);
-        RobotSteer.thetaR = atan(RobotSteer.L / (RobotSteer.R - (RobotSteer.T / 2))) * (180 / PI);
-        RobotSteer.thetaL = -atan(RobotSteer.L / (RobotSteer.R + (RobotSteer.T / 2))) * (180 / PI);
+        pwm_data.pwm = abs(pwm) + pwm_offset_;
+        pwm_data.invert_ = true;
     }
-    else if (steer_angle == 0)
+    else if (pwm > 0)
     {
-        RobotSteer.thetaR = 0;
-        RobotSteer.thetaL = 0;
+        pwm_data.pwm += pwm_offset_;
+        pwm_data.invert_ = false;
     }
 
-    Pulse[0] = RobotSteer.thetaR / Pulse2Deg;
-    Pulse[1] = RobotSteer.thetaL / Pulse2Deg;
-    steppers.moveTo(Pulse);
-    steppers.runSpeedToPosition();
+    if (pwm > 255)
+        pwm_data.pwm = 255;
+
+    return pwm_data;
+}
+
+void Stepper_init()
+{
+    R_Stepper.setMaxSpeed(16000); //* pulse
+    R_Stepper.setAcceleration(4000);
+    R_Stepper.setSpeed(8000);
+
+    L_Stepper.setMaxSpeed(16000);
+    R_Stepper.setAcceleration(4000);
+    L_Stepper.setSpeed(8000);
 }

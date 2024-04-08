@@ -27,8 +27,6 @@ rclc_executor_t executor;
 
 ROS_communication::ROS_communication() {}
 
-
-
 void ROS_communication::initialize()
 {
     Serial.begin(115200);
@@ -36,7 +34,6 @@ void ROS_communication::initialize()
     set_microros_serial_transports(Serial);
 
     allocator = rcl_get_default_allocator();
-
 
     rclc_support_init(&support, 0, NULL, &allocator);
     rclc_node_init_default(&node, "Base_controller", "", &support);
@@ -72,7 +69,6 @@ void ROS_communication::vel_callback(const void *msg_recv)
 
     /* 馬達控制函式*/
     MotorDrive(linear_vel);
-    Ackermann(steer_angle);
 }
 
 void ROS_communication::start_receiving_msgs()
