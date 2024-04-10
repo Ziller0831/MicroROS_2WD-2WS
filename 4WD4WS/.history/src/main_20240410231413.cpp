@@ -18,13 +18,7 @@
 #include "kinematic.h"
 
 Kinematics kinematics(
-    Kinematics::ACKERMAN,
-    MAX_BLDC_RPM,
-    WHEEL_DIAMETER,
-    WHEELBASE,
-    TRACK
-);
-
+        Kinematics::ACKERMANN,);
 ROS_communication ros;
 
 MultiStepper steering_steppers;

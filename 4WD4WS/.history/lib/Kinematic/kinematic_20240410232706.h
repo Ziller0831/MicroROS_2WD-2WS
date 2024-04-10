@@ -20,8 +20,8 @@ class Kinematics
 public:
     enum base
     {
-        ACKERMAN,            // 1
-        ACKERMAN_SELF_ROTATE, // 2
+        ACKERMANN,            // 1
+        ACKERMANN_SELF_ROTATE, // 2
         DIFFERENTIAL_DRIVE
     };
 
@@ -72,7 +72,7 @@ private:
     float fWheelCircumference_;
 
     // TODO:把傳出也改成用傳址的方式
-    MCD ackerman(Vel* vel);
+    MCD ackermann(Vel* vel);
     MCD selfRotate(float rotate_vel);
     CP baseOrderConvert(MCD* mcd);
 };

@@ -21,8 +21,8 @@ Kinematics kinematics(
     Kinematics::ACKERMAN,
     MAX_BLDC_RPM,
     WHEEL_DIAMETER,
-    WHEELBASE,
-    TRACK
+    WHEELBASE
+
 );
 
 ROS_communication ros;

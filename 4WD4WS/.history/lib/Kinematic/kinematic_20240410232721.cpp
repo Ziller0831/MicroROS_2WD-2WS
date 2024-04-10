@@ -16,15 +16,15 @@ Kinematics::Kinematics(base robot_base,
 
 Kinematics::MCD Kinematics::inverseKinematics(Vel *vel)
 {
-    if (eBasePlatform_ == ACKERMAN)
+    if (eBasePlatform_ == ACKERMANN)
     {
     }
-    else if (eBasePlatform_ == ACKERMAN_SELF_ROTATE)
+    else if (eBasePlatform_ == ACKERMANN_SELF_ROTATE)
     {
     }
 }
 
-Kinematics::MCD Kinematics::ackerman(Vel *vel)
+Kinematics::MCD Kinematics::ackermann(Vel *vel)
 {
     float linear_x_mins;
     float rad_of_turningCircle;
@@ -33,14 +33,14 @@ Kinematics::MCD Kinematics::ackerman(Vel *vel)
     linear_x_mins = vel->linear_x * 60;       //* m/s -> m/min
     steer_angle = vel->rotate_z * (PI / 180); //* rad -> degree
 
-    rad_of_turningCircle = (fWheelBase_) / tan(steer_angle);
+    rad_of_turningCircle = (fWheelBase_ / 2) / tan(steer_angle);
 
     MCD mcd;
 
     if (steer_angle != 0)
     {
-        mcd.angle.STEPPER_R = atan(fWheelBase_ / (rad_of_turningCircle + (fTrack_ / 2))) * (180 / PI);
-        mcd.angle.STEPPER_L = -atan(fWheelBase_ / (rad_of_turningCircle - (fTrack_ / 2))) * (180 / PI);
+        mcd.angle.STEPPER_R = atan(fWheelBase_ / (rad_of_turningCircle + (track_ / 2))) * (180 / PI);
+        mcd.angle.STEPPER_L = -atan(fWheelBase_ / (rad_of_turningCircle - (track_ / 2))) * (180 / PI);
     }
     else if (steer_angle == 0)
     {

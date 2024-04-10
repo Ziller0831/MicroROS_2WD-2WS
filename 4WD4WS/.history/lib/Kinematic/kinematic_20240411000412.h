@@ -20,7 +20,7 @@ class Kinematics
 public:
     enum base
     {
-        ACKERMAN,            // 1
+        ACKERMANN,            // 1
         ACKERMAN_SELF_ROTATE, // 2
         DIFFERENTIAL_DRIVE
     };

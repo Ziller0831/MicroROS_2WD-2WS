@@ -20,12 +20,12 @@ class Kinematics
 public:
     enum base
     {
-        ACKERMAN,            // 1
-        ACKERMAN_SELF_ROTATE, // 2
+        ACKERMANN,            // 1
+        ACKERMANN_SELF_ROTATE, // 2
         DIFFERENTIAL_DRIVE
     };
 
-    enum base eBasePlatform_;
+    enum base eBasePlatform;
 
     typedef struct Velocities
     {
@@ -66,13 +66,13 @@ public:
 
 private:
 
-    int iMaxRpm_;
+    int imaxRpm_;
     float fWheelBase_;
-    float fTrack_;
-    float fWheelCircumference_;
+    float track_;
+    float wheel_circumference_;
 
     // TODO:把傳出也改成用傳址的方式
-    MCD ackerman(Vel* vel);
+    MCD ackermann(Vel* vel);
     MCD selfRotate(float rotate_vel);
     CP baseOrderConvert(MCD* mcd);
 };

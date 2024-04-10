@@ -15,16 +15,9 @@
 #include <Arduino.h>
 #include "ros_communication.h"
 #include "Base_controller.h"
-#include "kinematic.h"
+#include ""
 
-Kinematics kinematics(
-    Kinematics::ACKERMAN,
-    MAX_BLDC_RPM,
-    WHEEL_DIAMETER,
-    WHEELBASE,
-    TRACK
-);
-
+Kinematics ;
 ROS_communication ros;
 
 MultiStepper steering_steppers;

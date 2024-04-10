@@ -34,6 +34,5 @@
 #define TRACK 1120
 #define WHEELBASE 750
 #define WHEEL_DIAMETER 13   // 吋
-#define MAX_BLDC_RPM 10
 
 #endif

@@ -72,7 +72,7 @@ private:
     float fWheelCircumference_;
 
     // TODO:把傳出也改成用傳址的方式
-    MCD ackerman(Vel* vel);
+    MCD ACKERMAN(Vel* vel);
     MCD selfRotate(float rotate_vel);
     CP baseOrderConvert(MCD* mcd);
 };

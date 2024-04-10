@@ -16,15 +16,15 @@ Kinematics::Kinematics(base robot_base,
 
 Kinematics::MCD Kinematics::inverseKinematics(Vel *vel)
 {
-    if (eBasePlatform_ == ACKERMAN)
+    if (eBasePlatform_ == ACKERMANN)
     {
     }
-    else if (eBasePlatform_ == ACKERMAN_SELF_ROTATE)
+    else if (eBasePlatform_ == ACKERMANN_SELF_ROTATE)
     {
     }
 }
 
-Kinematics::MCD Kinematics::ackerman(Vel *vel)
+Kinematics::MCD Kinematics::ackermann(Vel *vel)
 {
     float linear_x_mins;
     float rad_of_turningCircle;

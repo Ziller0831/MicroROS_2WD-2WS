@@ -22,7 +22,8 @@ Kinematics kinematics(
     MAX_BLDC_RPM,
     WHEEL_DIAMETER,
     WHEELBASE,
-    TRACK
+    TRACK,
+    WHEEL_DIAMETER
 );
 
 ROS_communication ros;

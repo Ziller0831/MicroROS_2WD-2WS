@@ -18,11 +18,11 @@
 #include "kinematic.h"
 
 Kinematics kinematics(
-    Kinematics::ACKERMAN,
+    Kinematics::DIFFERENTIAL_DRIVE,
     MAX_BLDC_RPM,
     WHEEL_DIAMETER,
-    WHEELBASE,
-    TRACK
+    WHEELBASE
+
 );
 
 ROS_communication ros;
@@ -31,8 +31,6 @@ MultiStepper steering_steppers;
 
 BLDC bldcR_controller(0, BLDC_R_PWM, R_PWM_CHANNEL, BLDC_R_REV, 120);
 BLDC bldcL_controller(0, BLDC_L_PWM, L_PWM_CHANNEL, BLDC_L_REV, 120);
-
-
 
 void setup()
 {

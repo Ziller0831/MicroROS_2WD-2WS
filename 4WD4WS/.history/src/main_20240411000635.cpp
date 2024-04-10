@@ -18,11 +18,11 @@
 #include "kinematic.h"
 
 Kinematics kinematics(
-    Kinematics::ACKERMAN,
+    Kinematics::DIFFERENTIAL_DRIVE,
     MAX_BLDC_RPM,
     WHEEL_DIAMETER,
-    WHEELBASE,
-    TRACK
+    WHEELBASE
+
 );
 
 ROS_communication ros;
