@@ -5,4 +5,4 @@
 
 float32 linear_x
 float32 center_rotation_rad
-int8 turning_distance
+int8 turning_mode
