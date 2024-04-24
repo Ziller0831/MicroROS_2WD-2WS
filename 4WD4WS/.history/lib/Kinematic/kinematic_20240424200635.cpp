@@ -83,9 +83,9 @@ Kinematics::MControl Kinematics::ackerman(MCommand *mCommand)
         vel_L = (R_long / cos(angle_L)) / abs_center_rotation_rad * linear_x_mm;
     }
     else if (center_rotation_rad < -800 && turning_model == 0)
-    {
-        angle_R = -atan(fWheelBase_ / R_long);
-        angle_L = -atan(fWheelBase_ / R_short);
+    {z
+        angle_R = -atan(fWheelBase_ / R_long) * RAD_TO_DEG;
+        angle_L = -atan(fWheelBase_ / R_short) * RAD_TO_DEG;
 
         vel_R = (R_long / cos(angle_R)) / abs_center_rotation_rad * linear_x_mm;
         vel_L = (R_short / cos(angle_L)) / abs_center_rotation_rad * linear_x_mm;

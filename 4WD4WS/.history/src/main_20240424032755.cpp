@@ -88,11 +88,11 @@ void setup()
 {
   R_Stepper.setMaxSpeed(8000); //* pulse
   R_Stepper.setAcceleration(2000);
-  R_Stepper.setSpeed(5000);
+  R_Stepper.setSpeed(8000);
 
   L_Stepper.setMaxSpeed(8000);
   R_Stepper.setAcceleration(2000);
-  L_Stepper.setSpeed(5000);
+  L_Stepper.setSpeed(8000);
 
   steering_steppers.addStepper(R_Stepper);
   steering_steppers.addStepper(L_Stepper);
@@ -216,7 +216,6 @@ void moveBase()
 
   long stepperPulse[2] = {req_convertPara.pulse.STEPPER_R, req_convertPara.pulse.STEPPER_L};
   steering_steppers.moveTo(stepperPulse);
-  steering_steppers.runSpeedToPosition();
 }
 
 void syncTime()

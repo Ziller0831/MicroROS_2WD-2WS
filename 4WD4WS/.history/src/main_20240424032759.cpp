@@ -216,7 +216,6 @@ void moveBase()
 
   long stepperPulse[2] = {req_convertPara.pulse.STEPPER_R, req_convertPara.pulse.STEPPER_L};
   steering_steppers.moveTo(stepperPulse);
-  steering_steppers.runSpeedToPosition();
 }
 
 void syncTime()

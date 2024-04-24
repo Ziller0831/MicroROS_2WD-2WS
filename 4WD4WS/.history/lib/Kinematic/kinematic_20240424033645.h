@@ -72,7 +72,7 @@ private:
     int iMaxVel_;
     float fWheelBase_;
     float fTrack_;
-    float degree2pulse_;
+    float degree2pulse_
     double fWheelCircumference_;
 
     // TODO:把傳出也改成用傳址的方式

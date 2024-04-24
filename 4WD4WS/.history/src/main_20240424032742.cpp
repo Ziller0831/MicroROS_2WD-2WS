@@ -28,6 +28,7 @@
     rcl_ret_t temp_rc = fn;      \
     if ((temp_rc != RCL_RET_OK)) \
     {                            \
+    
       rclErrorLoop();            \
     }                            \
   }
@@ -86,13 +87,13 @@ MultiStepper steering_steppers;
 
 void setup()
 {
-  R_Stepper.setMaxSpeed(8000); //* pulse
-  R_Stepper.setAcceleration(2000);
-  R_Stepper.setSpeed(5000);
+  R_Stepper.setMaxSpeed(16000); //* pulse
+  R_Stepper.setAcceleration(4000);
+  R_Stepper.setSpeed(8000);
 
-  L_Stepper.setMaxSpeed(8000);
-  R_Stepper.setAcceleration(2000);
-  L_Stepper.setSpeed(5000);
+  L_Stepper.setMaxSpeed(16000);
+  R_Stepper.setAcceleration(4000);
+  L_Stepper.setSpeed(8000);
 
   steering_steppers.addStepper(R_Stepper);
   steering_steppers.addStepper(L_Stepper);
@@ -216,7 +217,6 @@ void moveBase()
 
   long stepperPulse[2] = {req_convertPara.pulse.STEPPER_R, req_convertPara.pulse.STEPPER_L};
   steering_steppers.moveTo(stepperPulse);
-  steering_steppers.runSpeedToPosition();
 }
 
 void syncTime()

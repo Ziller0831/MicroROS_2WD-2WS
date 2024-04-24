@@ -11,10 +11,10 @@ Kinematics::Kinematics(base robot_base, int motor_max_vel,
                                       degree2pulse_(DEG_TO_PUL){};
 
 Kinematics::CP Kinematics::inverseKinematics(
-    float linear_x,
-    float center_rotation_rad,
-    int center_rotation_angle,
-    int turning_mode)
+        float linear_x, 
+        float center_rotation_rad, 
+        int center_rotation_angle,
+        int turning_mode)
 {
     MCommand mCommand;
     MControl mControl;
@@ -53,13 +53,13 @@ Kinematics::MControl Kinematics::ackerman(MCommand *mCommand)
     }
     else if (mCommand->center_rotation_rad == 0 && mCommand->center_rotation_angle != 0)
     {
-        theta_center = mCommand->center_rotation_angle * DEG_TO_RAD;
-        center_rotation_rad = fTrack_ / (2 * sin(theta_center));
+        theta_center = mCommand->center_rotation_angle;
+        center_rotation_rad = fTrack_ / (2 * sin(theta_center * DEG_TO_RAD));
     }
     else
     {
-        mControl.rpm.BLDC_L = linear_x_mm * (60 / fWheelCircumference_) / 1000;
-        mControl.rpm.BLDC_R = linear_x_mm * (60 / fWheelCircumference_) / 1000;
+        mControl.rpm.BLDC_L = linear_x_mm * (60 / fWheelCircumference_)/1000;
+        mControl.rpm.BLDC_R = linear_x_mm * (60 / fWheelCircumference_)/1000;
         mControl.angle.STEPPER_L = 0;
         mControl.angle.STEPPER_R = 0;
         return mControl;
@@ -74,7 +74,7 @@ Kinematics::MControl Kinematics::ackerman(MCommand *mCommand)
     float R_long = rotation_rad + fTrack_ / 2;
     float R_short = rotation_rad - fTrack_ / 2;
 
-    if (center_rotation_rad > 800 && turning_model == 0)
+    if (center_rotation_rad > 800 && turning_model > 0)
     {
         angle_R = atan(fWheelBase_ / R_short);
         angle_L = atan(fWheelBase_ / R_long);
@@ -82,10 +82,10 @@ Kinematics::MControl Kinematics::ackerman(MCommand *mCommand)
         vel_R = (R_short / cos(angle_R)) / abs_center_rotation_rad * linear_x_mm;
         vel_L = (R_long / cos(angle_L)) / abs_center_rotation_rad * linear_x_mm;
     }
-    else if (center_rotation_rad < -800 && turning_model == 0)
+    else if (center_rotation_rad < -800 && turning_model > 0)
     {
-        angle_R = -atan(fWheelBase_ / R_long);
-        angle_L = -atan(fWheelBase_ / R_short);
+        angle_R = atan(fWheelBase_ / R_long) * RAD_TO_DEG;
+        angle_L = atan(fWheelBase_ / R_short) * RAD_TO_DEG;
 
         vel_R = (R_long / cos(angle_R)) / abs_center_rotation_rad * linear_x_mm;
         vel_L = (R_short / cos(angle_L)) / abs_center_rotation_rad * linear_x_mm;
@@ -104,8 +104,8 @@ Kinematics::CP Kinematics::baseOrderConvert(MControl *mControl)
 {
     CP converterParameters;
 
-    converterParameters.pulse.STEPPER_R = mControl->angle.STEPPER_R / degree2pulse_;
-    converterParameters.pulse.STEPPER_L = mControl->angle.STEPPER_L / degree2pulse_;
+    converterParameters.pulse.STEPPER_R = mControl->angle.STEPPER_R / PULSE_TO_DEG;
+    converterParameters.pulse.STEPPER_L = mControl->angle.STEPPER_L / PULSE_TO_DEG;
 
     converterParameters.pwm.BLDC_R = mControl->rpm.BLDC_R * (255 / iMaxVel_);
     converterParameters.pwm.BLDC_L = mControl->rpm.BLDC_L * (255 / iMaxVel_);
