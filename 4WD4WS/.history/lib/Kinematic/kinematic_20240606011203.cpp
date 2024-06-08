@@ -46,7 +46,7 @@ Kinematics::MControl Kinematics::ackerman(MCommand *mCommand)
     float linear_x_mm = mCommand->linear_x * 1000; //* m/s -> mm/s
     int turning_model = mCommand->turning_mode;
 
-    //* Ackerman parameter calc
+    //* Ackerman parameter process
     if (mCommand->center_rotation_rad != 0 && mCommand->center_rotation_angle == 0)
     {
         center_rotation_rad = mCommand->center_rotation_rad * 1000;

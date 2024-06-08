@@ -165,6 +165,7 @@ void subscriber_define()
 
 void motion_callback(const void *msg_recv)
 {
+  digitalWrite(Move_LED_PIN, !digitalRead(Move_LED_PIN));
   moveBase();
   prev_cmd_time = millis();
 }
