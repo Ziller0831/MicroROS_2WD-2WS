@@ -40,6 +40,7 @@
   }
 
 #define LED_PIN 2
+#define Move_LED_PIN 21
 #define DOMAIN_ID 0
 
 unsigned long long time_offset;
@@ -109,7 +110,7 @@ void loop()
 void initialize()
 {
   Serial.begin(115200);
-  Serial.println("ROS Communication node start");
+  Serial.println("ROS Communication node started");
   set_microros_serial_transports(Serial);
 
   time_offset = 0;
@@ -165,6 +166,7 @@ void subscriber_define()
 
 void motion_callback(const void *msg_recv)
 {
+  digitalWrite(Move_LED_PIN, !digitalRead(Move_LED_PIN));
   moveBase();
   prev_cmd_time = millis();
 }
