@@ -1,1 +1,0 @@
-clss Cup()
