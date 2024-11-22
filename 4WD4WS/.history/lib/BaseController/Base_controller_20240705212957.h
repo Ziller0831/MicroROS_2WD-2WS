@@ -21,16 +21,16 @@ class BLDC : public MotorInterface
 {
 public:
     //* 物件建構子多載
-    BLDC(bool invert, short int pwm_pin, short int pwm_channel, short int rev_pin, int pwm_offset, int pwm_resolution);
+    BLDC(bool invert, int pwm_pin, int pwm_channel, int rev_pin, int pwm_offset, int pwm_resolution);
 
     void brake() override;
 
     int processPWM(int pwm);
 
 private:
-    short int _pwm_pin;
-    short int _pwm_channel;
-    short int _rev_pin;
+    int _pwm_pin;
+    int _pwm_channel;
+    int _rev_pin;
     int _pwm_offset;
     int _pwm_resolution;
 
@@ -38,5 +38,15 @@ protected:
     void forward(int pwm) override;
     void reverse(int pwm) override;
 };
+
+void Stepper_init();
+
+// class Stepper : public MultiStepper
+// {
+//     public:
+//         Stepper();
+
+//     protected:
+// };
 
 #endif

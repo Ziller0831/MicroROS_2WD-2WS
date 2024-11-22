@@ -75,7 +75,7 @@ private:
     float _fWheelBase;
     float _fTrack;
     float _degree2pulse;
-    int _max_pwm = pow(2, PWM_RESOLUTION) - 1;
+    byte _max_pwm = pow(2, PWM_RESOLUTION) - 1;
     double _fWheelCircumference;
 
     // TODO:把傳出也改成用傳址的方式

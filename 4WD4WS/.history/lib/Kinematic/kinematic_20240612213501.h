@@ -21,20 +21,19 @@ class Kinematics
 public:
     enum base
     {
-        ACKERMAN,      // 0
+        ACKERMAN, // 0
         SELF_ROTATION, // 1
-        DIFFERENTIAL_DRIVE,
-        ROBOT_2WD2WS,
+        DIFFERENTIAL_DRIVE
     };
 
-    enum base eBasePlatform;
+    enum base eBasePlatform_;
 
     typedef struct MotionCommand
     {
         float linear_x;
         float center_rotation_rad;
         float center_rotation_angle;
-        short int turning_mode;
+        int turning_mode;
     } MCommand;
 
     MCommand mCommand;
@@ -67,16 +66,15 @@ public:
         } pulse;
     } CP;
 
-    Kinematics(base robot_base, float motor_max_vel, int wheelDiameter, float wheelBase, float track);
-    CP inverseKinematics(float linear_x, float center_rotation_rad, int center_rotation_angle, short int turning_mode);
+    Kinematics(base robot_base, int motor_max_rpm, int wheelDiameter, float wheelBase, float track);
+    CP inverseKinematics(float linear_x, float center_rotation_rad, int center_rotation_angle, int turning_mode);
 
 private:
-    float _iMaxRPM;
-    float _fWheelBase;
-    float _fTrack;
-    float _degree2pulse;
-    int _max_pwm = pow(2, PWM_RESOLUTION) - 1;
-    double _fWheelCircumference;
+    int _iMaxRPM;
+    float fWheelBase;
+    float fTrack;
+    float degree2pulse;
+    double fWheelCircumference;
 
     // TODO:把傳出也改成用傳址的方式
     MControl ackerman(MCommand *mCommand);

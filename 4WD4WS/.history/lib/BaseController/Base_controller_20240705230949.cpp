@@ -45,8 +45,8 @@ int BLDC::processPWM(int pwm)
         pwm += _pwm_offset;
     }
 
-    if (pwm > (pow(2, _pwm_resolution) - 1))
-        pwm = (pow(2, _pwm_resolution) - 1);
+    if (pwm > pow(2, _pwm_resolution))
+        pwm = pow(2, _pwm_resolution);
 
     return pwm;
 }

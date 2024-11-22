@@ -46,7 +46,7 @@ Kinematics::MControl Kinematics::ackerman(MCommand *mCommand)
     float angle_R, angle_L;
     float vel_R, vel_L;
 
-    float linear_x_mm = mCommand->linear_x * 1000; // m/s -> mm/s
+    float linear_x_mm = mCommand->linear_x * 1000; //* m/s -> mm/s
 
     //@ Ackerman parameter calc
     //* rotation radius input

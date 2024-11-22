@@ -28,9 +28,9 @@ public:
     int processPWM(int pwm);
 
 private:
-    short int _pwm_pin;
-    short int _pwm_channel;
-    short int _rev_pin;
+    int _pwm_pin;
+    int _pwm_channel;
+    int _rev_pin;
     int _pwm_offset;
     int _pwm_resolution;
 
@@ -38,5 +38,15 @@ protected:
     void forward(int pwm) override;
     void reverse(int pwm) override;
 };
+
+void Stepper_init();
+
+// class Stepper : public MultiStepper
+// {
+//     public:
+//         Stepper();
+
+//     protected:
+// };
 
 #endif

@@ -39,4 +39,14 @@ protected:
     void reverse(int pwm) override;
 };
 
+void Stepper_init();
+
+// class Stepper : public MultiStepper
+// {
+//     public:
+//         Stepper();
+
+//     protected:
+// };
+
 #endif

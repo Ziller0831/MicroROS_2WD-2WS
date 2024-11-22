@@ -64,6 +64,7 @@ rclc_support_t support;
 rclc_executor_t executor;
 
 rcl_node_t node;
+rcl_timer_t control_timer;
 
 //* 宣告内存分配器物件
 rcl_allocator_t allocator;
@@ -76,8 +77,8 @@ rcl_subscription_t joy_motion_subscriber;
 //* 宣告消息文件
 customize_interface__msg__MotionCommand motion_command;
 customize_interface__msg__JoyMotionCommand joy_command;
+// std_msgs__msg__Float64 test_msg;
 
-//* 宣告運動學
 Kinematics kinematics(
     Kinematics::ROBOT_2WD2WS,
     MAX_BLDC_vel,
@@ -85,14 +86,78 @@ Kinematics kinematics(
     WHEELBASE,
     TRACK);
 
-//* 宣告左右BLDC馬達控制器物件
 BLDC bldcR_controller(false, BLDC_R_PWM, R_PWM_CHANNEL, BLDC_R_REV, PWM_OFFSET, PWM_RESOLUTION);
 BLDC bldcL_controller(false, BLDC_L_PWM, L_PWM_CHANNEL, BLDC_L_REV, PWM_OFFSET, PWM_RESOLUTION);
 
-//* 宣告左右轉向步進馬達物件
 AccelStepper R_Stepper(AccelStepper::DRIVER, STEP_R, DIR_R);
 AccelStepper L_Stepper(AccelStepper::DRIVER, STEP_L, DIR_L);
 MultiStepper steering_steppers;
+
+void initialize()
+{
+  Serial.begin(115200);
+  Serial.println("ROS Communication node start");
+  set_microros_serial_transports(Serial);
+
+  time_offset = 0;
+  prev_cmd_time = 0;
+
+  allocator = rcl_get_default_allocator();
+  RCCHECK(rclc_support_init(&support, 0, NULL, &allocator));
+  RCCHECK(rclc_node_init_default(&node, "Base_controller", "", &support));
+}
+
+void subscriber_define()
+{
+  RCCHECK(rclc_subscription_init_default(
+      &motion_subscriber,
+      &node,
+      ROSIDL_GET_MSG_TYPE_SUPPORT(customize_interface, msg, MotionCommand),
+      "/motion_command"));
+  RCCHECK(rclc_subscription_init_default(
+      &joy_motion_subscriber,
+      &node,
+      ROSIDL_GET_MSG_TYPE_SUPPORT(customize_interface, msg, JoyMotionCommand),
+      "/joy_command"));
+}
+
+void executors_start()
+{
+  executor = rclc_executor_get_zero_initialized_executor();
+  RCCHECK(rclc_executor_init(&executor, &support.context, 2, &allocator));
+
+  // RCCHECK(rclc_executor_add_subscription(
+  //     &executor,
+  //     &motion_subscriber,
+  //     &motion_command,
+  //     &motion_callback,
+  //     ON_NEW_DATA));
+  RCCHECK(rclc_executor_add_subscription(
+      &executor,
+      &joy_motion_subscriber,
+      &joy_command,
+      &motion_callback,
+      ON_NEW_DATA));
+
+  digitalWrite(LED_PIN, HIGH);
+
+  Serial.println("Executors Started");
+}
+
+// void publisher_define()
+// {
+//   RCCHECK(rclc_publisher_init_default(
+//       &test_publisher,
+//       &node,
+//       ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float64),
+//       "/base_test"));
+// }
+
+void motion_callback(const void *msg_recv)
+{
+  moveBase();
+  prev_cmd_time = millis();
+}
 
 void moveBase()
 {
@@ -118,12 +183,7 @@ void moveBase()
   long stepperPulse[2] = {req_convertPara.pulse.STEPPER_R, req_convertPara.pulse.STEPPER_L};
   steering_steppers.moveTo(stepperPulse);
   steering_steppers.runSpeedToPosition();
-}
-
-void motion_callback(const void *msg_recv)
-{
-  moveBase();
-  prev_cmd_time = millis();
+  // vTaskDelay(1000);
 }
 
 void setup()
@@ -139,12 +199,16 @@ void setup()
   steering_steppers.addStepper(R_Stepper);
   steering_steppers.addStepper(L_Stepper);
 
-  // initialize();
-  // subscriber_init();
-  // executors_start();
+  initialize();
+  subscriber_define();
+  executors_start();
+
+  joy_command.linear_x = 0;
+  joy_command.center_rotate_angle = 0;
+  joy_command.turning_mode = 0;
 }
 
 void loop()
 {
-  // RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
+  RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
 }
