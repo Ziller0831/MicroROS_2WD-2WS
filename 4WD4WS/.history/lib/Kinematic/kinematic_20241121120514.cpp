@@ -10,7 +10,6 @@ Kinematics::Kinematics(base robot_base, float motor_max_vel,
                                       _fTrack(track),
                                       _degree2pulse(DEG_TO_PUL) {};
 
-//% 逆向運動學選擇
 Kinematics::CP Kinematics::inverseKinematics(
     float linear_x,
     float center_rotation_rad,
@@ -36,7 +35,6 @@ Kinematics::CP Kinematics::inverseKinematics(
     return converterParameters;
 }
 
-//% 阿克曼轉向運動學
 Kinematics::MControl Kinematics::ackerman(MCommand *mCommand)
 {
     MControl mControl;
@@ -46,22 +44,22 @@ Kinematics::MControl Kinematics::ackerman(MCommand *mCommand)
     float angle_R, angle_L;
     float vel_R, vel_L;
 
-    float linear_x_mm = mCommand->linear_x * 1000; // m/s -> mm/s
+    float linear_x_mm = mCommand->linear_x * 1000; //* m/s -> mm/s
 
-    //@ Ackerman parameter calc
-    //* rotation radius input
+    //% Ackerman parameter calc
+    //@ rotation radius input
     if (mCommand->center_rotation_rad != 0 && mCommand->center_rotation_angle == 0)
     {
         center_rotation_rad = mCommand->center_rotation_rad * 1000;
         theta_center = asin(_fTrack / (2 * center_rotation_rad));
     }
-    //* center rotation angle input
+    //@ center rotation angle input
     else if (mCommand->center_rotation_rad == 0 && mCommand->center_rotation_angle != 0)
     {
         theta_center = mCommand->center_rotation_angle * DEG_TO_RAD;
         center_rotation_rad = _fTrack / (2 * sin(theta_center));
     }
-    //* forward/backward
+    //@ forward/backward
     else
     {
         mControl.rpm.BLDC_L = (linear_x_mm / 1000) * (60 / _fWheelCircumference) * BLDC_GEAR_RATIO;
@@ -82,7 +80,7 @@ Kinematics::MControl Kinematics::ackerman(MCommand *mCommand)
     float R_short = rotation_rad - _fTrack / 2;
     float R_long = rotation_rad + _fTrack / 2;
 
-    //@ Angle calc
+    //% Angle calc
     //* 順時針
     if (center_rotation_rad > 800)
     {
@@ -110,7 +108,6 @@ Kinematics::MControl Kinematics::ackerman(MCommand *mCommand)
     return mControl;
 }
 
-//% 自轉運動學
 Kinematics::MControl Kinematics::selfRotation(MCommand *mCommand)
 {
     MControl mControl;
@@ -140,7 +137,6 @@ Kinematics::MControl Kinematics::selfRotation(MCommand *mCommand)
     return mControl;
 }
 
-//% 命令轉換成控制指令
 Kinematics::CP Kinematics::baseOrderConvert(MControl *mControl)
 {
     CP converterParameters;

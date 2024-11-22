@@ -94,6 +94,58 @@ AccelStepper R_Stepper(AccelStepper::DRIVER, STEP_R, DIR_R);
 AccelStepper L_Stepper(AccelStepper::DRIVER, STEP_L, DIR_L);
 MultiStepper steering_steppers;
 
+void initialize()
+{
+  Serial.begin(115200);
+  set_microros_serial_transports(Serial);
+  Serial.println("ROS Communication node start");
+
+  time_offset = 0;
+  prev_cmd_time = 0;
+
+  allocator = rcl_get_default_allocator();
+  RCCHECK(rclc_support_init(&support, 0, NULL, &allocator));
+  RCCHECK(rclc_node_init_default(&node, "Base_controller", "", &support));
+}
+
+//* 訂閱者初始化
+void subscriber_init()
+{
+  RCCHECK(rclc_subscription_init_default(
+      &motion_subscriber,
+      &node,
+      ROSIDL_GET_MSG_TYPE_SUPPORT(customize_interface, msg, MotionCommand),
+      "/motion_command"));
+  RCCHECK(rclc_subscription_init_default(
+      &joy_motion_subscriber,
+      &node,
+      ROSIDL_GET_MSG_TYPE_SUPPORT(customize_interface, msg, JoyMotionCommand),
+      "/joy_command"));
+}
+
+void executors_start()
+{
+  executor = rclc_executor_get_zero_initialized_executor();
+  RCCHECK(rclc_executor_init(&executor, &support.context, 2, &allocator));
+
+  // RCCHECK(rclc_executor_add_subscription(
+  //     &executor,
+  //     &motion_subscriber,
+  //     &motion_command,
+  //     &motion_callback,
+  //     ON_NEW_DATA));
+  RCCHECK(rclc_executor_add_subscription(
+      &executor,
+      &joy_motion_subscriber,
+      &joy_command,
+      &motion_callback,
+      ON_NEW_DATA));
+
+  digitalWrite(LED_PIN, HIGH);
+
+  Serial.println("Executors Started");
+}
+
 void moveBase()
 {
   float linear_x;
@@ -139,12 +191,16 @@ void setup()
   steering_steppers.addStepper(R_Stepper);
   steering_steppers.addStepper(L_Stepper);
 
-  // initialize();
-  // subscriber_init();
-  // executors_start();
+  initialize();
+  subscriber_init();
+  executors_start();
+
+  joy_command.linear_x = 0;
+  joy_command.center_rotate_angle = 0;
+  joy_command.turning_mode = 0;
 }
 
 void loop()
 {
-  // RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
+  RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
 }
