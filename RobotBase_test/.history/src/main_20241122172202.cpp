@@ -31,6 +31,16 @@ BldcHallEncoder bldcR_encoder;
 
 void moveBase(float linear_x, float center_rotation_angle)
 {
+  // float linear_x;
+  // float center_rotation_rad;
+  // float center_rotation_angle;
+  // int turning_mode;
+
+  // linear_x = linear_x;
+  // center_rotation_rad = 0;
+  // center_rotation_angle = ;
+  // turning_mode = 0;
+
   Kinematics::CP req_convertPara = kinematics.inverseKinematics(
       linear_x,
       0,
@@ -59,7 +69,7 @@ void setup()
   steering_steppers.addStepper(R_Stepper);
   steering_steppers.addStepper(L_Stepper);
 
-  bldcR_encoder.init(0, ENCODER_L, 20);
+  bldcR_encoder.init(0, ENCODER_R, 20);
   bldcR_encoder.setGlitchFilter(100);
 }
 

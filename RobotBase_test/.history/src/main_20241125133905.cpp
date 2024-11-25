@@ -59,7 +59,7 @@ void setup()
   steering_steppers.addStepper(R_Stepper);
   steering_steppers.addStepper(L_Stepper);
 
-  bldcR_encoder.init(0, ENCODER_L, 20);
+  bldcR_encoder.init(0, ENCODER_R, 20);
   bldcR_encoder.setGlitchFilter(100);
 }
 
