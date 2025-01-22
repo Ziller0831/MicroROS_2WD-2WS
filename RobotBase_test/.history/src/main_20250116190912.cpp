@@ -2,11 +2,11 @@
 
 #include <AccelStepper.h>
 #include <MultiStepper.h>
+#include <Esp32PcntEncoder.h>
 
 #include "base_config.h"
 #include "Kinematic.h"
 #include "Base_controller.h"
-#include "ESP32Encoder.h"
 
 //* 宣告運動學
 Kinematics kinematics(
@@ -26,12 +26,12 @@ AccelStepper L_Stepper(AccelStepper::DRIVER, STEP_L, DIR_L);
 MultiStepper steering_steppers;
 
 // //* 宣告左右BLDC的Hall Encoder物件
-ESP32Encoder R_Encoder;
-ESP32Encoder L_Encoder;
+Esp32PcntEncoder encoders[2];
 
+int64_t last_ticks[2];
+int32_t delta_ticks[2];
+int64_t last_update_time;
 float current_speed[2];
-unsigned long Last_time = 0;
-int32_t last_pulse[2];
 
 void moveBase(float linear_x, float center_rotation_angle)
 {
@@ -64,21 +64,18 @@ void setup()
   steering_steppers.addStepper(R_Stepper);
   steering_steppers.addStepper(L_Stepper);
 
-  ESP32Encoder::useInternalWeakPullResistors = puType::up;
+  encoders[0].init(0, ENC_R_A, ENC_R_B);
+  encoders[1].init(1, ENC_L_A, ENC_L_B);
 
-  R_Encoder.attachHalfQuad(ENC_R_A, ENC_R_B);
-  L_Encoder.attachHalfQuad(ENC_L_A, ENC_L_B);
+  encoders[0].setPeerPcntDistance(0.05185);
+  encoders[1].setPeerPcntDistance(0.05185);
 
-  R_Encoder.setFilter(400);
-  L_Encoder.setFilter(400);
-
-  R_Encoder.clearCount();
-  L_Encoder.clearCount();
+  encoders[0].setGlitchFilter(1);
+  encoders[1].setGlitchFilter(1);
 }
 
 void loop()
 {
-  unsigned long current_time = millis();
   if (Serial.available() > 0)
   {
     String data = Serial.readString();
@@ -86,18 +83,7 @@ void loop()
     // Serial.println("linear_x: " + String(linear_x) + " center_rotation_angle: " + S float center_rotation_angle = data.substring(data.indexOf(",") + 1).toFloat(); tring(center_rotation_angle));
     moveBase(linear_x, 0);
   }
-  // Serial.println("Encoder count = " + String((int32_t)R_Encoder.getCount()) + " " + String((int32_t)L_Encoder.getCount()));
-  // delay(100);
 
-  if (current_time - Last_time >= Sampling_time)
-  {
-    int32_t pulse[2] = {(int32_t)R_Encoder.getCount(), (int32_t)L_Encoder.getCount()};
-
-    R_Encoder.clearCount();
-    L_Encoder.clearCount();
-
-    Serial.println("Speed: " + String(pulse[0]) + " " + String(pulse[1]));
-
-    Last_time = current_time;
-  }
+  Serial.printf("R: Speed:%d, L Speed:%d\n", encoders[0].getSpeed(), encoders[1].getSpeed());
+  delay(10);
 }

@@ -31,7 +31,7 @@ ESP32Encoder L_Encoder;
 
 float current_speed[2];
 unsigned long Last_time = 0;
-int32_t last_pulse[2];
+long last_pulse[2];
 
 void moveBase(float linear_x, float center_rotation_angle)
 {
@@ -66,11 +66,11 @@ void setup()
 
   ESP32Encoder::useInternalWeakPullResistors = puType::up;
 
-  R_Encoder.attachHalfQuad(ENC_R_A, ENC_R_B);
-  L_Encoder.attachHalfQuad(ENC_L_A, ENC_L_B);
+  R_Encoder.attach(ENC_R_A, ENC_R_B, encType::half);
+  L_Encoder.attach(ENC_L_A, ENC_L_B, encType::half);
 
-  R_Encoder.setFilter(400);
-  L_Encoder.setFilter(400);
+  R_Encoder.setFilter(1023);
+  L_Encoder.setFilter(1023);
 
   R_Encoder.clearCount();
   L_Encoder.clearCount();
@@ -86,17 +86,25 @@ void loop()
     // Serial.println("linear_x: " + String(linear_x) + " center_rotation_angle: " + S float center_rotation_angle = data.substring(data.indexOf(",") + 1).toFloat(); tring(center_rotation_angle));
     moveBase(linear_x, 0);
   }
-  // Serial.println("Encoder count = " + String((int32_t)R_Encoder.getCount()) + " " + String((int32_t)L_Encoder.getCount()));
-  // delay(100);
+  Serial.println("R" + String((int32_t)R_Encoder.getCount()) + " L" + String((int32_t)L_Encoder.getCount()));
 
   if (current_time - Last_time >= Sampling_time)
   {
-    int32_t pulse[2] = {(int32_t)R_Encoder.getCount(), (int32_t)L_Encoder.getCount()};
+    int64_t pulse[2] = {R_Encoder.getCount(), L_Encoder.getCount()};
+    int64_t delta_pulse[2] = {pulse[0] - last_pulse[0], pulse[1] - last_pulse[1]};
+    last_pulse[0] = pulse[0];
+    last_pulse[1] = pulse[1];
 
-    R_Encoder.clearCount();
-    L_Encoder.clearCount();
+    float revolution[2] = {(float)delta_pulse[0] / Pulse_per_revolution, (float)delta_pulse[1] / Pulse_per_revolution};
+    float rpm[2] = {(float)((double)revolution[0] * 60000.0 / (double)(current_time - Last_time)), (float)((double)revolution[1] * 60000.0 / (double)(current_time - Last_time))};
 
-    Serial.println("Speed: " + String(pulse[0]) + " " + String(pulse[1]));
+    float linear[2] = {static_cast<float>((revolution[0] * WHEEL_DIAMETER * PI) / (Sampling_time / 1000.0)),
+                       static_cast<float>((revolution[1] * WHEEL_DIAMETER * PI) / (Sampling_time / 1000.0))};
+
+    // R_Encoder.clearCount();
+    // L_Encoder.clearCount();
+
+    // Serial.println("Speed: " + String(linear[0]) + " " + String(linear[1]));
 
     Last_time = current_time;
   }

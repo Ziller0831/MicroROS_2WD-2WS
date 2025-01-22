@@ -92,6 +92,9 @@ void loop()
   if (current_time - Last_time >= Sampling_time)
   {
     int32_t pulse[2] = {(int32_t)R_Encoder.getCount(), (int32_t)L_Encoder.getCount()};
+    int32_t delta_pulse[2] = {pulse[0] - last_pulse[0], pulse[1] - last_pulse[1]};
+    last_pulse[0] = pulse[0];
+    last_pulse[1] = pulse[1];
 
     R_Encoder.clearCount();
     L_Encoder.clearCount();

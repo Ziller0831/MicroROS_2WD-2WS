@@ -67,10 +67,10 @@ void setup()
   ESP32Encoder::useInternalWeakPullResistors = puType::up;
 
   R_Encoder.attachHalfQuad(ENC_R_A, ENC_R_B);
-  L_Encoder.attachHalfQuad(ENC_L_A, ENC_L_B);
+  L_Encoder.attachHalfQuad(ENC_L_B, ENC_L_A);
 
-  R_Encoder.setFilter(400);
-  L_Encoder.setFilter(400);
+  R_Encoder.setFilter(512);
+  L_Encoder.setFilter(512);
 
   R_Encoder.clearCount();
   L_Encoder.clearCount();
@@ -92,6 +92,15 @@ void loop()
   if (current_time - Last_time >= Sampling_time)
   {
     int32_t pulse[2] = {(int32_t)R_Encoder.getCount(), (int32_t)L_Encoder.getCount()};
+    int32_t delta_pulse[2] = {pulse[0] - last_pulse[0], pulse[1] - last_pulse[1]};
+    last_pulse[0] = pulse[0];
+    last_pulse[1] = pulse[1];
+
+    float revolution[2] = {(float)delta_pulse[0] / Pulse_per_revolution, (float)delta_pulse[1] / Pulse_per_revolution};
+    float rpm[2] = {(float)((double)revolution[0] * 60000.0 / (double)(current_time - Last_time)), (float)((double)revolution[1] * 60000.0 / (double)(current_time - Last_time))};
+
+    float linear[2] = {static_cast<float>((revolution[0] * WHEEL_DIAMETER * PI) / (Sampling_time / 1000.0)),
+                       static_cast<float>((revolution[1] * WHEEL_DIAMETER * PI) / (Sampling_time / 1000.0))};
 
     R_Encoder.clearCount();
     L_Encoder.clearCount();

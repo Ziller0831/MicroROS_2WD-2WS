@@ -41,6 +41,6 @@
 #define BLDC_GEAR_RATIO 4
 
 const int Pulse_per_revolution = 20;
-const int Sampling_time = 500;
+const int Sampling_time = 1000;
 
 #endif

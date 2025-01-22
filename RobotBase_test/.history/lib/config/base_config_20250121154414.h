@@ -40,7 +40,7 @@
 #define MAX_BLDC_vel 2
 #define BLDC_GEAR_RATIO 4
 
-const int Pulse_per_revolution = 20;
-const int Sampling_time = 500;
+const int PULSE_PER_REVOLUTION 20;
+const int SAMPLING_TIME 100;
 
 #endif

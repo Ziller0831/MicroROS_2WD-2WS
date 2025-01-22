@@ -21,11 +21,10 @@
 #define BLDC_R_REV 16
 #define BLDC_L_REV 4
 
-//* ENCODER PINS
-#define ENC_L_A 39
-#define ENC_L_B 36
-#define ENC_R_A 34
-#define ENC_R_B 35
+#define ENC_L_A 34
+#define ENC_L_B 35
+#define ENC_R_A 39
+#define ENC_R_B 36
 
 //* PWM channels
 #define R_PWM_CHANNEL 0
@@ -39,8 +38,5 @@
 #define WHEEL_DIAMETER 13 // 吋
 #define MAX_BLDC_vel 2
 #define BLDC_GEAR_RATIO 4
-
-const int Pulse_per_revolution = 20;
-const int Sampling_time = 500;
 
 #endif

@@ -1,19 +1,18 @@
 #include "BldcHallEncoder.h"
 
-bool BldcHallEncoder::init(int pcntUnit, int pin_A, int pin_B, float distancePerPulse)
+bool BldcHallEncoder::init(int pcntUnit, int pin, int pin_A, float distancePerPulse)
 {
-    _pin_A = pin_A;
-    _pin_B = pin_B;
+    _pin = pin;
     _distancePerPulse = distancePerPulse;
     _pcntUnit = static_cast<pcnt_unit_t>(pcntUnit);
 
     pcnt_config_t pcntConfig = {
-        .pulse_gpio_num = (gpio_num_t)_pin_A,
-        .ctrl_gpio_num = (gpio_num_t)_pin_B,
-        .lctrl_mode = PCNT_MODE_REVERSE,
+        .pulse_gpio_num = (gpio_num_t)pin_A,
+        .ctrl_gpio_num = (gpio_num_t)pin_B,
+        .lctrl_mode = PCNT_MODE_KEEP,
         .hctrl_mode = PCNT_MODE_KEEP,
-        .pos_mode = PCNT_COUNT_DEC,
-        .neg_mode = PCNT_COUNT_INC,
+        .pos_mode = PCNT_COUNT_INC,
+        .neg_mode = PCNT_COUNT_DIS,
         .counter_h_lim = 32767,
         .counter_l_lim = -32768,
         .unit = _pcntUnit,

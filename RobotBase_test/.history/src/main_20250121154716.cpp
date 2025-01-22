@@ -31,7 +31,6 @@ ESP32Encoder L_Encoder;
 
 float current_speed[2];
 unsigned long Last_time = 0;
-int32_t last_pulse[2];
 
 void moveBase(float linear_x, float center_rotation_angle)
 {
@@ -64,13 +63,13 @@ void setup()
   steering_steppers.addStepper(R_Stepper);
   steering_steppers.addStepper(L_Stepper);
 
-  ESP32Encoder::useInternalWeakPullResistors = puType::up;
+  ESP32Encoder::useInternalWeakPullResistors = UP;
 
   R_Encoder.attachHalfQuad(ENC_R_A, ENC_R_B);
   L_Encoder.attachHalfQuad(ENC_L_A, ENC_L_B);
 
-  R_Encoder.setFilter(400);
-  L_Encoder.setFilter(400);
+  R_Encoder.setFilter(1023);
+  L_Encoder.setFilter(1023);
 
   R_Encoder.clearCount();
   L_Encoder.clearCount();
@@ -86,17 +85,20 @@ void loop()
     // Serial.println("linear_x: " + String(linear_x) + " center_rotation_angle: " + S float center_rotation_angle = data.substring(data.indexOf(",") + 1).toFloat(); tring(center_rotation_angle));
     moveBase(linear_x, 0);
   }
-  // Serial.println("Encoder count = " + String((int32_t)R_Encoder.getCount()) + " " + String((int32_t)L_Encoder.getCount()));
-  // delay(100);
 
   if (current_time - Last_time >= Sampling_time)
   {
-    int32_t pulse[2] = {(int32_t)R_Encoder.getCount(), (int32_t)L_Encoder.getCount()};
+
+    float R_speed = R_Encoder.getCount() * DEG_TO_PUL / Sampling_time;
+    float L_speed = L_Encoder.getCount() * DEG_TO_PUL / Sampling_time;
+
+    current_speed[0] = R_speed;
+    current_speed[1] = L_speed;
 
     R_Encoder.clearCount();
     L_Encoder.clearCount();
 
-    Serial.println("Speed: " + String(pulse[0]) + " " + String(pulse[1]));
+    Serial.println("R_speed: " + String(R_speed) + " L_speed: " + String(L_speed));
 
     Last_time = current_time;
   }
