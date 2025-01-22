@@ -95,11 +95,13 @@ FastAccelStepper *R_Stepper = nullptr;
 FastAccelStepper *L_Stepper = nullptr;
 
 XboxSeriesXControllerESP32_asukiaaa::Core
-    xboxController(XBOX_MAC_ADDR);
+    xboxController("3c:fa:06:08:2d:08");
 
 void initialize()
 {
+  Serial.begin(115200);
   set_microros_serial_transports(Serial);
+  xboxController.begin();
 
   prev_cmd_time = 0;
 
@@ -146,10 +148,7 @@ void subscriber_init()
       "/joy_command"));
 }
 
-void moveBase(float linear_x = joy_command.linear_x,
-              float center_rotation_rad = 0,
-              float center_rotation_angle = joy_command.center_rotate_angle,
-              int turning_mode = joy_command.turning_mode)
+void moveBase(float linear_x = joy_command.linear_x, center_rotation_rad = 0, float center_rotation_angle = float joy_command.center_rotate_angle, int turning_mode = joy_command.turning_mode;)
 {
   int32_t right_steps;
   int32_t left_steps;
@@ -221,70 +220,19 @@ void executors_start()
   Serial.println("Executors Started");
 }
 
-int8_t turning_mode = 0;
-boolean gear_flag = true; // 換檔旗標
-boolean vel_direction = true;
-
-float linear_mapping(float value, float in_min, float in_max, float out_min, float out_max)
-{
-  return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
-void remote_control()
-{
-
-  if (xboxController.xboxNotif.btnB == 1 && gear_flag == true)
-  {
-    turning_mode = !(turning_mode);
-    gear_flag = false;
-  }
-  else if (xboxController.xboxNotif.btnB == 0)
-  {
-    gear_flag = true;
-  }
-
-  float_t linear_x = linear_mapping((float)xboxController.xboxNotif.trigRT, 0, 1023, 0, 2);
-
-  if (xboxController.xboxNotif.btnLB == 1 && linear_x == 0)
-  {
-    vel_direction = false;
-  }
-  else if (xboxController.xboxNotif.btnRB == 1 && linear_x == 0)
-  {
-    vel_direction = true;
-  }
-
-  if (vel_direction == true)
-  {
-    joy_command.linear_x = linear_x;
-  }
-  else
-  {
-    joy_command.linear_x = -linear_x;
-  }
-
-  joy_command.center_rotate_angle = linear_mapping((float_t)xboxController.xboxNotif.joyLHori, 0, 65535, -45, 45);
-
-  Serial.println(String(joy_command.linear_x));
-  moveBase(joy_command.linear_x, 0, joy_command.center_rotate_angle, turning_mode);
-}
+// void remote_control()
+// {
+//   xboxController.onLoop();
+// }
 
 void setup()
 {
-  Serial.begin(115200);
-
-  //! 藍牙遙控與ROS2遙控只能二擇一
-  xboxController.begin();
-
-  // initialize();
-  // subscriber_init();
-  // executors_start();
+  initialize();
+  subscriber_init();
+  executors_start();
 }
 
 void loop()
 {
-  xboxController.onLoop();
-  remote_control();
-
   RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
 }

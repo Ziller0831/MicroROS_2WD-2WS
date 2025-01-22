@@ -273,18 +273,16 @@ void setup()
 {
   Serial.begin(115200);
 
-  //! 藍牙遙控與ROS2遙控只能二擇一
   xboxController.begin();
 
-  // initialize();
-  // subscriber_init();
-  // executors_start();
+  initialize();
+  subscriber_init();
+  executors_start();
 }
 
 void loop()
 {
   xboxController.onLoop();
   remote_control();
-
-  RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
+  // Serial.println(String(xboxController.xboxNotif.trigRT));
 }

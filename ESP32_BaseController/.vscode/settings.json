@@ -26,7 +26,11 @@
         "streambuf": "cpp",
         "type_traits": "cpp",
         "tuple": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "array": "cpp",
+        "list": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp"
     },
     "cmake.sourceDirectory": "/home/ced/Documents/GitCode_ws/ROS2_4WS/4WD4WS/.pio/libdeps/nodemcu-32s/micro_ros_platformio/ci/extra_packages/my_custom_message"
 }
