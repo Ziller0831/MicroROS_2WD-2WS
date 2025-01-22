@@ -265,7 +265,7 @@ void remote_control()
 
   joy_command.center_rotate_angle = linear_mapping((float_t)xboxController.xboxNotif.joyLHori, 0, 65535, -45, 45);
 
-  Serial.println(String(joy_command.linear_x));
+  // Serial.println(String(joy_command.linear_x));
   moveBase(joy_command.linear_x, 0, joy_command.center_rotate_angle, turning_mode);
 }
 
@@ -273,18 +273,16 @@ void setup()
 {
   Serial.begin(115200);
 
-  //! 藍牙遙控與ROS2遙控只能二擇一
   xboxController.begin();
 
-  // initialize();
-  // subscriber_init();
-  // executors_start();
+  initialize();
+  subscriber_init();
+  executors_start();
 }
 
 void loop()
 {
   xboxController.onLoop();
   remote_control();
-
-  RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
+  // Serial.println(String(xboxController.xboxNotif.trigRT));
 }

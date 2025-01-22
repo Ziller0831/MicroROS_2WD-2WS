@@ -285,6 +285,5 @@ void loop()
 {
   xboxController.onLoop();
   remote_control();
-
-  RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
+  // Serial.println(String(xboxController.xboxNotif.trigRT));
 }
